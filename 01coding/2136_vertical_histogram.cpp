@@ -53,4 +53,5 @@ int main(){
     printf("%c", ('A'+i));
   }
   printf("\n");
+  return 0;
 }
