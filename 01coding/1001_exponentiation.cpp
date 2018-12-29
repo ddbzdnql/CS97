@@ -12,13 +12,19 @@ public:
     exp = 0;
     size = 0;
     raw_digits = (char *)malloc(length * sizeof(char));
-    int i, cur;
+    int i, cur,trail=0;
     for (i=length-1; i>=0; i--){
       if (raw[i] != '.'){
-        raw_digits[size++] = raw[i];
+        if (raw[i] != '0'){
+          trail = 1;
+        }
+        if (trail || raw[i] != '0'){
+          raw_digits[size++] = raw[i];
+        }
       }
       else{
         exp = size;
+        trail = 1;
       }
     }
   }
@@ -33,11 +39,10 @@ public:
 prec_num multiply(prec_num&, prec_num&);
 
 int main(){
-/*
   int stat;
   char * num = (char *)malloc(6*sizeof(char));
   int exp = 0;
-  while((stat=scanf("%s%d", num, &exp)) != EOF){
+  while(scanf("%s%d", num, &exp) != EOF){
     prec_num cur(num, 6);
     prec_num result = cur;
     int times;
@@ -49,28 +54,18 @@ int main(){
       if (result.raw_digits[i] != '0'){
 	    lead = 1;
       }
+      if (index++ + result.exp == result.size){
+        printf(".");
+        lead = 1;
+      }
       if (lead){
-	    if (index++ == exp){
-	      printf(".");
-	    }
-	    printf("%c", result.raw_digits[i]);
+        printf("%c", result.raw_digits[i]);
       }
     }
     printf("\n");
   }
-*/
-  char * raw1 = (char *)malloc(6 * sizeof(char));
-  char * raw2 = (char *)malloc(6 * sizeof(char));
-  scanf("%s %s", raw1, raw2);
-  prec_num num1(raw1, 6);
-  prec_num num2(raw2, 6);
-  prec_num res = multiply(num1, num2);
-  int i;
-  for (i = 0; i < res.size; i++){
-    printf("%c", res.raw_digits[i]);
-  }
-  printf("\n");
 
+  return 0;
 }
 
 prec_num multiply(prec_num& mult1, prec_num& mult2){
@@ -87,10 +82,8 @@ prec_num multiply(prec_num& mult1, prec_num& mult2){
       int bit2 = mult2.raw_digits[j] - '0';
       int partial = bit1 * bit2 + carry;
       result_digits[i+j] += partial;
-      //printf("%d %d %d %d ", bit1, bit2, carry, partial);
       carry = result_digits[i+j] / 10;
       result_digits[i+j] = result_digits[i+j] % 10;
-      //printf("%d\n", carry);
     } 
     result_digits[i+j] += carry;
   }
