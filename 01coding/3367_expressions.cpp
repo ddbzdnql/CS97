@@ -5,75 +5,72 @@
 #include <queue>
 #include <vector>
 
-class exp_tree{
-  public:
-    int type;
-    char value;
-    struct exp_tree * left;
-    struct exp_tree * right;
-    struct exp_tree * parent;
-
-    exp_tree(char val){
-      type = 1;
-      value = val;
-      left = NULL;
-      right = NULL;
-    }
-
-    exp_tree(exp_tree * l, exp_tree * r, char val){
-      type = 2;
-      value = val;
-      left = l;
-      right = r;
-      l->parent = this;
-      r->parent = this;
-    }
-};
+struct node{
+  int type;
+  char c;
+  int l;
+  int r;
+} arr[10001];
 
 int main(){
   int cases;
   scanf("%d", &cases);
   getchar();
-  while(cases > 0){
-    std::stack<exp_tree *> s;
-    int size = 0;
-    char c;
-    while((c=getchar()) != '\n'){
-      if ('a' <= c && c <= 'z'){
-        exp_tree * leaf = new exp_tree(c);
-        s.push(leaf);
+
+  while(cases >0){
+    char cur = getchar();
+    int i = 0;
+    std::stack<int> s;
+    while(cur != '\n'){
+      if (cur>='a' && cur<='z'){
+        i++;
+        arr[i].type=1;
+        arr[i].c = cur;
+        s.push(i);
       }
       else{
-        exp_tree * right = s.top();
+        if (cur >= 'A' && cur <= 'Z'){
+        int right = s.top();
         s.pop();
-        exp_tree * left = s.top();
+        int left = s.top();
         s.pop();
-        exp_tree * branch = new exp_tree(left, right, c);
-        s.push(branch);
+        i++;
+        arr[i].type=2;
+        arr[i].c = cur;
+        arr[i].l = left;
+        arr[i].r = right;
+        s.push(i);
+       }
       }
-      size++;
+      cur = getchar();
     }
 
-    exp_tree * root = s.top();
+    if (s.size() == 1){
+    char * toprint = (char *)calloc(i, sizeof(char));
+    int root = s.top();
     s.pop();
-    char * toprint = (char *)calloc(size, sizeof(char));
-
-    int i = 0;
-    std::queue<exp_tree *> q;
+    
+    std::queue<int> q;
     q.push(root);
+ 
+    int j=0;
     while(!q.empty()){
-      exp_tree * cur = q.front();
+      int cur_i = q.front();
       q.pop();
-      toprint[size-1-i++] = cur->value;
-      if (cur->type != 1){
-        q.push(cur->left);
-        q.push(cur->right);
+      toprint[i-1-j++] = arr[cur_i].c;
+      if (arr[cur_i].type == 2){
+        q.push(arr[cur_i].l);
+        q.push(arr[cur_i].r);
       }
     }
-
 
     printf("%s\n", toprint);
-    free(toprint);
+    }
+    else{
+      printf("\n");
+    }
     cases --;
   }
+
+  return 0;
 }
