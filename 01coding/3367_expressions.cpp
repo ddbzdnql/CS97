@@ -1,76 +1,44 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <stack>
-#include <queue>
+#include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
+#include <algorithm>
+#include <assert.h>
+#include <cctype>
+using namespace std;
 
-struct node{
-  int type;
-  char c;
-  int l;
-  int r;
-} arr[10001];
+typedef vector<string> VS;
 
-int main(){
-  int cases;
-  scanf("%d", &cases);
-  getchar();
+string code;
+VS res;
 
-  while(cases >0){
-    char cur = getchar();
-    int i = 0;
-    std::stack<int> s;
-    while(cur != '\n'){
-      if (cur>='a' && cur<='z'){
-        i++;
-        arr[i].type=1;
-        arr[i].c = cur;
-        s.push(i);
-      }
-      else{
-        if (cur >= 'A' && cur <= 'Z'){
-        int right = s.top();
-        s.pop();
-        int left = s.top();
-        s.pop();
-        i++;
-        arr[i].type=2;
-        arr[i].c = cur;
-        arr[i].l = left;
-        arr[i].r = right;
-        s.push(i);
-       }
-      }
-      cur = getchar();
-    }
+void doit(int &pos, int d) {
+	assert(pos >= 0);
+	res[d] += code[pos];
+	--pos;
+	if (islower(code[pos+1]))
+		return;
+	assert(isupper(code[pos+1]));
+	doit(pos,d+1);
+	doit(pos,d+1);
+}
 
-    if (s.size() == 1){
-    char * toprint = (char *)calloc(i, sizeof(char));
-    int root = s.top();
-    s.pop();
-    
-    std::queue<int> q;
-    q.push(root);
- 
-    int j=0;
-    while(!q.empty()){
-      int cur_i = q.front();
-      q.pop();
-      toprint[i-1-j++] = arr[cur_i].c;
-      if (arr[cur_i].type == 2){
-        q.push(arr[cur_i].l);
-        q.push(arr[cur_i].r);
-      }
-    }
-
-    printf("%s\n", toprint);
-    }
-    else{
-      printf("\n");
-    }
-    cases --;
-  }
-
-  return 0;
+int main() {
+	int tc;
+//	ifstream in("expressions.in");
+	cin >> tc;
+	assert(tc >= 1 && tc <= 200);
+	while(tc--) {
+		assert(cin >> code);
+		assert(code.size() < 10000 && code.size() % 2 == 1);
+		res.assign(code.size(),"");
+		int pos = code.size()-1;
+		doit(pos, 0);
+		assert(pos < 0);
+		//for (int i=0;i<code.size();i++) cout<<res[i]<<endl;
+		for (VS::reverse_iterator it=res.rbegin(); it!=res.rend(); ++it)
+			cout << *it;
+		cout << endl;
+	}
+	return 0;
 }
