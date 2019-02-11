@@ -1,41 +1,70 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <string>
-#include <vector>
-#include <iostream>
+#include <algorithm>
 
-struct node{
-  int p;
-  std::string l;
-} arr[50001];
+using namespace std;
 
-int main(){
-  int size;
-  scanf("%d ", &size);
-  while(size != 0){
-    char c;
-    int i = 0;
-    while(i < size){
-      std::string temp;
-      while((c=getchar()) != '/'){
-        temp += c;
-      }
-      arr[i+1].l = temp;
+class node{
+  public:
+    int priority;
+    char * label;
+    int left;
+    int right;
+} * arr[50001];
 
-      int cur;
-      scanf("%d ", &cur);
-      arr[i+1].p = cur;
+void print_tree(node ** needle, int max_p, int size){
+  node * temp = needle[max_p];
+  needle[max_p] = needle[0];
+  needle[0] = temp;
 
-      i++;
+  int l = 1, r = size-1;
+  while(l <= r){
+    if (strcmp(needle[l]->)){
+
     }
-    int j;
-    for (j=1; j<=i; j++){
-      std::cout << arr[j].l << "/" << arr[j].p << std::endl;
-    }
-    scanf("%d ", &size);
   }
+
+  printf("(");
+  printf("%s/%d", needle[0]->label, needle[0]->label);
+  printf(")");
 }
 
-use the quick sort spirit:
-every iteration find the largest pr and split by larger and smaller than its label.
-then for the left and right parts do the same thing until the left and right parts have length smaller than 3
+int main(){
+  int l;
+  unsigned seed = 1221;
+  scanf("%d", &l);
+  char delim[] = "/";
+  while(l != 0){
+    int i = 0;
+    while(i < l){
+      i++;
+      char str[17];
+      scanf("%s", str);
+      char * ptr = strtok(str, delim);
+      char * la = (char *)calloc(8, sizeof(char));
+      strcpy(la, str);
+      ptr = strtok(NULL, ptr);
+      int p = atoi(ptr);
+      if (arr[i] == NULL){
+        arr[i] = (node *)malloc(sizeof(node));
+      }
+      arr[i]->priority = p;
+      arr[i]->label = la;
+      arr[i]->left = 0;
+      arr[i]->right = 0;
+    }
+    random_shuffle(arr+1, arr+l+1);
+    int max_p = 0;
+    for (int i=1; i<=l; i++){
+      if (max_p==0 || arr[max_p]->priority < arr[i]->priority){
+        max_p = i;
+      }
+      printf("%s %d\n", arr[i]->label, arr[i]->priority);
+    }
+    //print_tree(arr+1, max_p, size);
+     
+    scanf("%d", &l);
+  } 
+}
