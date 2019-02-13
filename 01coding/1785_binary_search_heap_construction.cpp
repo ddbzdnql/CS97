@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <string>
+#include <string.h>
 #include <algorithm>
 
 using namespace std;
@@ -18,16 +18,45 @@ void print_tree(node ** needle, int max_p, int size){
   node * temp = needle[max_p];
   needle[max_p] = needle[0];
   needle[0] = temp;
-
-  int l = 1, r = size-1;
+  int l = 1, r = size-1, l_max = 0, r_max = 0;
   while(l <= r){
-    if (strcmp(needle[l]->)){
-
+    if (strcmp(needle[l]->label, needle[0]->label) > 0){
+      temp = needle[l];
+      needle[l] = needle[r];
+      needle[r] = temp;
+      if (r_max == 0 || needle[r_max]->priority < needle[r]->priority){
+        r_max = r;
+      }
+      r--;
+    }
+    else{
+      if (l_max == 0 || needle[l_max]->priority < needle[l]->priority){
+        l_max = l;
+      }
+      l++;
     }
   }
 
+  
+
   printf("(");
-  printf("%s/%d", needle[0]->label, needle[0]->label);
+  if (l-1 > 1){
+    print_tree(needle+1, l_max-1, l-1);
+  }
+  else{
+    if (l-1 != 0){
+      printf("(%s/%d)", needle[1]->label, needle[1]->priority);
+    }
+  }
+  printf("%s/%d", needle[0]->label, needle[0]->priority);
+  if (size-l > 1){
+    print_tree(needle+r+1, r_max-l, size-l);
+  }
+  else{
+    if (size-l != 0){
+      printf("(%s/%d)", needle[r+1]->label, needle[r+1]->priority);
+    }
+  }
   printf(")");
 }
 
@@ -55,15 +84,15 @@ int main(){
       arr[i]->left = 0;
       arr[i]->right = 0;
     }
-    random_shuffle(arr+1, arr+l+1);
+    //random_shuffle(arr+1, arr+l+1);
     int max_p = 0;
     for (int i=1; i<=l; i++){
       if (max_p==0 || arr[max_p]->priority < arr[i]->priority){
         max_p = i;
       }
-      printf("%s %d\n", arr[i]->label, arr[i]->priority);
     }
-    //print_tree(arr+1, max_p, size);
+    print_tree(arr+1, max_p-1, l);
+    printf("\n");
      
     scanf("%d", &l);
   } 
